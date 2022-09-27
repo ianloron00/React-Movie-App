@@ -4,9 +4,9 @@ const MovieList = (props) => {
 	const FavouriteComponent = props.favouriteComponent;
 
 	return (
-		<div className="images-container d-flex justify-content-between m-3">
+		<div className='images-container d-flex justify-content-start m-3'>
 			{props.movies.map((movie, index) => (
-				<div className='image-container'>
+				<div className='image-container d-flex justify-content-start m-3'>
 					<img src={movie.Poster} alt='movie'></img>
 					<div
 						onClick={() => props.handleFavouritesClick(movie)}
