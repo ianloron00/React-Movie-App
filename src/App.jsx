@@ -13,17 +13,24 @@ const App = () => {
 	const [searchValue, setSearchValue] = useState('');
 	const [favourites, setFavourites] = useState([]);
     const [description, setDescription] = useState();
+    const key = "263d22d8";
 
-	const getMovieRequest = async (searchValue) => {
-		const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=263d22d8`;
+	const getMovieRequest = async (searchValue, isID) => {
+		const url = `http://www.omdbapi.com/?${(isID ? "i" : "s")}=${searchValue}&apikey=${key}`;
 
-		const response = await fetch(url);
-		const responseJson = await response.json();
+		const res = await fetch(url);
+		const json = await res.json();
 
-		if (responseJson.Search) {
-			setMovies(responseJson.Search);
-		}
+        return json;
 	};
+
+    const updateMovies = async ( searchValue, ID ) => {
+        const json = await getMovieRequest( searchValue, ID );
+
+        if (json.Search) {
+			setMovies(json.Search);
+		}
+    }
 
 	const addFavouriteMovie = (movie) => {
 		const newFavouriteList = [...favourites, movie];
@@ -38,12 +45,12 @@ const App = () => {
 		setFavourites(newFavouriteList);
 	};
 
-    const addDescription = (movie) => {
-        setDescription(movie);
+    const addDescription = (description) => {
+        setDescription(description);
     };
 
 	useEffect(() => {
-		getMovieRequest(searchValue);
+		updateMovies(searchValue, false);
 	}, [searchValue]);
     
 	return (
@@ -61,6 +68,7 @@ const App = () => {
 					favouriteComponent={AddFavourites}
 					handleFavouritesClick={addFavouriteMovie}
                     addDescription={addDescription}
+                    getMovieRequest={getMovieRequest}
 				/>
 			</div>
 			<div className='row d-flex align-items-center mt-4 mb-4'>
@@ -72,6 +80,7 @@ const App = () => {
 					favouriteComponent={RemoveFavourites}
 					handleFavouritesClick={removeFavouriteMovie}
                     addDescription={addDescription}
+                    getMovieRequest={getMovieRequest}
 				/>
 			</div>
 
@@ -79,7 +88,9 @@ const App = () => {
 				<MovieListHeading heading='Description' />
 			</div>
             <div className="movieDescription" >
-                <MovieDescription description={description} />
+                <MovieDescription 
+                description={description}
+                 />
             </div>
 		</div>
 	);
